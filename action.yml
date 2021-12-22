@@ -1,22 +1,35 @@
-name: 'Composite Run Steps Action Template'
+name: 'Check Jira Deployment Attestations'
 
-description: 'Add description here'
+description: 'This action will check a deployment task for technical, qa, and stakeholder approvals. If one is not found then the action will fail.'
 
 inputs:
-  input-1:
-    description: 'Add a description here'
+  domain-name:
+    description: 'The domain name for Jira.'
     required: true
-
-outputs:
-  output-1:
-    description: 'Add description here'
-    value: '${{ steps.step_1.outputs.world }}'
+  proposed-build-unique-identifier:
+    description: 'A string that will be compared against the proposed build field in order to identify the deployment ticket. This can be the whole value or just a unique part of it.'
+    required: true
+  projects-to-filter-by:
+    description: 'A comma separated string of project names to filter tickets by.'
+    required: false
+  skip-qa-approval:
+    description: 'A flag determining whether or not to skip checking for QA approval. Valid values are "true" and "false".'
+    required: false
+    default: 'false'
+  check-subtasks:
+    description: 'A flag determining whether or not to check for deployment sub-tasks. Valid values are "true" and "false".'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
   steps:
-    - name: Step 1
-      id: step_1
-      shell: bash
+    - name: Check for attestations on Jira task
+      shell: pwsh
       run: |
-        echo "::set-output name=hello::world"
+        ${{ github.action_path }}/src/jira-ticket-check.ps1 `
+          -jiraDomain "${{ inputs.domain-name }}" `
+          -uniqueProposedBuildIdentifier "${{ inputs.proposed-build-unique-identifier }}" `
+          -projectsToFilterTicketsBy "${{ inputs.projects-to-filter-by }}" `
+          -skipQaApproval:$${{ inputs.skip-qa-approval }} `
+          -deploymentTaskCanBeSubtask:$${{ inputs.check-subtasks }}

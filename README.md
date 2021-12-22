@@ -1,80 +1,51 @@
-# composite-run-steps-action-template
+# verify-jira-deployment-attestations
 
-This template can be used to quickly start a new custom composite-run-steps action repository.  Click the `Use this template` button at the top to get started.
+A GitHub Action that will query [Jira](https://www.atlassian.com/software/jira) for a deployment task and verify that it has all of the necessary approvals. Technical, QA, and Stakeholder approvals can all be checked, but a flag can be set to skip QA approval.
+
+This action has been customized for `im-open's` needs. It uses specific custom field identifiers and assumes a certain approval process is in place. Outside use is not recommended.
 
 ## Index
 
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-- [Example](#example)
-- [Contributing](#contributing)
-  - [Incrementing the Version](#incrementing-the-version)
-- [Code of Conduct](#code-of-conduct)
-- [License](#license)
+- [verify-jira-deployment-attestations](#verify-jira-deployment-attestations)
+  - [Index](#index)
+  - [TODOs](#todos)
+  - [Inputs](#inputs)
+  - [Example](#example)
+  - [Contributing](#contributing)
+    - [Incrementing the Version](#incrementing-the-version)
+  - [Code of Conduct](#code-of-conduct)
+  - [License](#license)
   
-## TODOs
-- Readme
-  - [ ] Update the Inputs section with the correct action inputs
-  - [ ] Update the Outputs section with the correct action outputs
-  - [ ] Update the Example section with the correct usage   
-- action.yml
-  - [ ] Fill in the correct name, description, inputs and outputs and implement steps
-- CODEOWNERS
-  - [ ] Update as appropriate
+## TODOs 
 - Repository Settings
-  - [ ] On the *Options* tab check the box to *Automatically delete head branches*
   - [ ] On the *Options* tab update the repository's visibility
-  - [ ] On the *Branches* tab add a branch protection rule
-    - [ ] Check *Require pull request reviews before merging*
-    - [ ] Check *Dismiss stale pull request approvals when new commits are pushed*
-    - [ ] Check *Require review from Code Owners*
-    - [ ] Check *Include Administrators*
-  - [ ] On the *Manage Access* tab add the appropriate groups
-- About Section (accessed on the main page of the repo, click the gear icon to edit)
-  - [ ] The repo should have a short description of what it is for
-  - [ ] Add one of the following topic tags:
-    | Topic Tag       | Usage                                    |
-    | --------------- | ---------------------------------------- |
-    | az              | For actions related to Azure             |
-    | code            | For actions related to building code     |
-    | certs           | For actions related to certificates      |
-    | db              | For actions related to databases         |
-    | git             | For actions related to Git               |
-    | iis             | For actions related to IIS               |
-    | microsoft-teams | For actions related to Microsoft Teams   |
-    | svc             | For actions related to Windows Services  |
-    | jira            | For actions related to Jira              |
-    | meta            | For actions related to running workflows |
-    | pagerduty       | For actions related to PagerDuty         |
-    | test            | For actions related to testing           |
-    | tf              | For actions related to Terraform         |
-  - [ ] Add any additional topics for an action if they apply    
     
 
 ## Inputs
-| Parameter | Is Required | Description           |
-| --------- | ----------- | --------------------- |
-| `input`   | true        | Description goes here |
-
-## Outputs
-| Output   | Description           |
-| -------- | --------------------- |
-| `output` | Description goes here |
+| Parameter                          | Is Required | Default | Description                                                                                                                                                          |
+| ---------------------------------- | ----------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `domain-name`                      | true        | N/A     | The domain name for Jira.                                                                                                                                            |
+| `proposed-build-unique-identifier` | true        | N/A     | A string that will be compared against the proposed build field in order to identify the deployment ticket. This can be the whole value or just a unique part of it. |
+| `projects-to-filter-by`            | false       | N/A     | A comma separated string of project names to filter tickets by.                                                                                                      |
+| `skip-qa-approval`                 | false       | false   | A flag determining whether or not to skip checking for QA approval. Valid values are "true" and "false".                                                             |
+| `check-subtasks`                   | false       | false   | A flag determining whether or not to check for deployment sub-tasks. Valid values are "true" and "false".                                                            |
 
 ## Example
 
 ```yml
 # TODO: Fill in the correct usage
 jobs:
-  job1:
+  verify-approvals-have-been-given:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-
-      - name: ''
-        uses: im-open/thisrepo@v1.0.0 # TODO: fix the action name
+      - name: 'Check Jira for Technical, QA, and Stakeholder approvals'
+        uses: im-open/verify-jira-deployment-attestations@v1.0.0
         with:
-          input-1: ''
+          domain-name: 'jira.company.com'
+          proposed-build-unique-identifier: 'my-repo/releases/tag/v1.0.0'
+          projects-to-filter-by: 'My Project'
+          skip-qa-approval: 'true'
+          check-subtasks: 'true'
 ```
 
 ## Contributing
