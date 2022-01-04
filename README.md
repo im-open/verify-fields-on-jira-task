@@ -1,51 +1,62 @@
-# verify-jira-deployment-attestations
+# verify-fields-on-jira-task
 
-A GitHub Action that will query [Jira](https://www.atlassian.com/software/jira) for a deployment task and verify that it has all of the necessary approvals. Technical, QA, and Stakeholder approvals can all be checked, but a flag can be set to skip QA approval.
+A GitHub Action that will query [Jira](https://www.atlassian.com/software/jira) for a ticket and verify that it has values for the designated fields. It does not check the values themselves, just verifies that values exist.
 
-This action has been customized for `im-open's` needs. It uses specific custom field identifiers and assumes a certain approval process is in place. Outside use is not recommended.
+This action has been customized for `im-open's` needs. Outside users will need to override the default values.
 
 ## Index
 
-- [verify-jira-deployment-attestations](#verify-jira-deployment-attestations)
+- [verify-fields-on-jira-task](#verify-fields-on-jira-task)
   - [Index](#index)
-  - [TODOs](#todos)
   - [Inputs](#inputs)
   - [Example](#example)
   - [Contributing](#contributing)
     - [Incrementing the Version](#incrementing-the-version)
   - [Code of Conduct](#code-of-conduct)
   - [License](#license)
-  
-## TODOs 
-- Repository Settings
-  - [ ] On the *Options* tab update the repository's visibility
     
 
 ## Inputs
-| Parameter                          | Is Required | Default | Description                                                                                                                                                          |
-| ---------------------------------- | ----------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `domain-name`                      | true        | N/A     | The domain name for Jira.                                                                                                                                            |
-| `proposed-build-unique-identifier` | true        | N/A     | A string that will be compared against the proposed build field in order to identify the deployment ticket. This can be the whole value or just a unique part of it. |
-| `projects-to-filter-by`            | false       | N/A     | A comma separated string of project names to filter tickets by.                                                                                                      |
-| `skip-qa-approval`                 | false       | false   | A flag determining whether or not to skip checking for QA approval. Valid values are "true" and "false".                                                             |
-| `check-subtasks`                   | false       | false   | A flag determining whether or not to check for deployment sub-tasks. Valid values are "true" and "false".                                                            |
+| Parameter                    | Is Required | Default                              | Description                                                                                                                                                          |
+| ---------------------------- | ----------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `domain-name`                | true        | N/A                                  | The domain name for Jira.                                                                                                                                            |
+| `project-names-to-search`    | false       | N/A                                  | A comma separated string of project names to search through for the desired Jira ticket. Spaces will be trimmed. Either this or issue-types-to-search should be set. |
+| `issue-types-to-search`      | false       | Deployment Task, Deployment Sub-Task | A comma separated string of issue types to search through for the desired Jira ticket. Spaces will be trimmed. Either this or project-names-to-search should be set. |
+| `search-field-id`            | true        | 11902                                | The field id of the field to search by.                                                                                                                              |
+| `search-value`               | true        | N/A                                  | The value the field, designated by search-field-id, should be set to on the Jira ticket being searched for.                                                          |
+| `fields-to-check-for-values` | true        | customfield_16323, customfield_11506 | A comma separated string of fields that will be checked for values. Spaces will be trimmed.                                                                          |
+| `check-parent-task`          | false       | false                                | A flag determining whether the parent task will be checked in the event a value isn't found on the task itself.                                                      |
 
 ## Example
-
+**Minimal example using defaults**
 ```yml
-# TODO: Fill in the correct usage
 jobs:
   verify-approvals-have-been-given:
     runs-on: ubuntu-20.04
     steps:
-      - name: 'Check Jira for Technical, QA, and Stakeholder approvals'
-        uses: im-open/verify-jira-deployment-attestations@v1.0.0
+      - name: 'Check a Deployment Task for Technical and Stakeholder approvals'
+        uses: im-open/verify-fields-on-jira-task@v1.0.0
         with:
           domain-name: 'jira.company.com'
-          proposed-build-unique-identifier: 'my-repo/releases/tag/v1.0.0'
-          projects-to-filter-by: 'My Project'
-          skip-qa-approval: 'true'
-          check-subtasks: 'true'
+          search-value: 'my-repo/releases/tag/v1.0.0'
+```
+
+**Full example overriding defaults**
+```yml
+jobs:
+  verify-ticket-has-fields-set:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: 'Check Jira ticket for two mandatory fields'
+        uses: im-open/verify-fields-on-jira-task@v1.0.0
+        with:
+          domain-name: 'jira.company.com'
+          project-names-to-search: 'First Project, Second Project'
+          issue-types-to-search: 'Task, Subtask'
+          search-field-id: '12345'
+          search-value: 'my-repo/releases/tag/v1.0.0'
+          fields-to-check-for-values: 'customfield_2345, customfield_3456'
+          check-parent-task: 'true'
 ```
 
 ## Contributing
