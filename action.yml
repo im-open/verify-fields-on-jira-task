@@ -6,18 +6,26 @@ inputs:
   domain-name:
     description: 'The domain name for Jira.'
     required: true
-  proposed-build-unique-identifier:
-    description: 'A string that will be compared against the proposed build field in order to identify the deployment ticket. This can be the whole value or just a unique part of it.'
+  project-names-to-search:
+    description: 'A comma separated string of project names to search through for the desired Jira ticket. Spaces will be trimmed. Either this or issue-types-to-search should be set.'
+    required: false
+  issue-types-to-search:
+    description: 'A comma separated string of issue types to search through for the desired Jira ticket. Spaces will be trimmed. Either this or project-names-to-search should be set.'
+    required: false
+    default: 'Deployment Task, Deployment Sub-Task'
+  search-field-id:
+    description: 'The field id of the field to search by.'
     required: true
-  projects-to-filter-by:
-    description: 'A comma separated string of project names to filter tickets by.'
-    required: false
-  skip-qa-approval:
-    description: 'A flag determining whether or not to skip checking for QA approval. Valid values are "true" and "false".'
-    required: false
-    default: 'false'
-  check-subtasks:
-    description: 'A flag determining whether or not to check for deployment sub-tasks. Valid values are "true" and "false".'
+    default: '11902'
+  search-value:
+    description: 'The value the field, designated by search-field-id, should be set to on the Jira ticket being searched for.'
+    required: true
+  fields-to-check-for-values:
+    description: 'A comma separated string of fields that will be checked for values. Spaces will be trimmed.'
+    required: true
+    default: 'customfield_16323, customfield_11506' # These correlate to Technical Approval and Stakeholder Approval in im-open's Jira
+  check-parent-task:
+    description: "A flag determining whether the parent task will be checked in the event a value isn't found on the task itself."
     required: false
     default: 'false'
 
@@ -27,9 +35,11 @@ runs:
     - name: Check for attestations on Jira task
       shell: pwsh
       run: |
-        ${{ github.action_path }}/src/jira-ticket-check.ps1 `
+        ${{ github.action_path }}/src/check-jira-ticket-fields.ps1 `
           -jiraDomain "${{ inputs.domain-name }}" `
-          -uniqueProposedBuildIdentifier "${{ inputs.proposed-build-unique-identifier }}" `
-          -projectsToFilterTicketsBy "${{ inputs.projects-to-filter-by }}" `
-          -skipQaApproval:$${{ inputs.skip-qa-approval }} `
-          -deploymentTaskCanBeSubtask:$${{ inputs.check-subtasks }}
+          -projectsToFilterTicketsBy "${{ inputs.project-names-to-search }}" `
+          -issuesToFilterTicketsBy "${{ inputs.issue-types-to-search }}" `
+          -filterByFieldId "${{ inputs.search-field-id }}" `
+          -filterByFieldValue "${{ inputs.search-value }}" `
+          -fieldsToCheck "${{ inputs.fields-to-check-for-values }}" `
+          -checkParentTask:$${{ inputs.check-parent-task }}
