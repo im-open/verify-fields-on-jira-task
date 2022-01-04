@@ -8,8 +8,17 @@ param (
     [switch]$checkParentTask = $false
 )
 
-$ProjectsFilter = @($projectsToFilterTicketsBy -split "," | ForEach-Object { " OR project=`"$($_.Trim())`"" }) -join ""
-$IssuesFilter = @($issuesToFilterTicketsBy -split "," | ForEach-Object { "issuetype=`"$($_.Trim())`"" }) -join " OR "
+$ProjectsFilter = ""
+$IssuesFilter = ""
+
+if ($projectsToFilterTicketsBy) {
+    $ProjectsFilter = @($projectsToFilterTicketsBy -split "," | ForEach-Object { " OR project=`"$($_.Trim())`"" }) -join ""
+}
+
+if ($issuesToFilterTicketsBy) {
+    $IssuesFilter = @($issuesToFilterTicketsBy -split "," | ForEach-Object { "issuetype=`"$($_.Trim())`"" }) -join " OR "
+}
+
 $Fields = $fieldsToCheck -split "," | ForEach-Object { $_.Trim() }
 $IssueAndProjectFilter = $IssuesFilter + $ProjectsFilter
 
