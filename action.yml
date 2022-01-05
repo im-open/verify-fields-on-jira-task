@@ -1,22 +1,45 @@
-name: 'Composite Run Steps Action Template'
+name: 'Verify fields on Jira Task'
 
-description: 'Add description here'
+description: 'This action will check a Jira task for the specified fields. If a value is not found for one then the action will fail.'
 
 inputs:
-  input-1:
-    description: 'Add a description here'
+  domain-name:
+    description: 'The domain name for Jira.'
     required: true
-
-outputs:
-  output-1:
-    description: 'Add description here'
-    value: '${{ steps.step_1.outputs.world }}'
+  project-names-to-search:
+    description: 'A comma separated string of project names to search through for the desired Jira ticket. Spaces will be trimmed. Either this or issue-types-to-search should be set.'
+    required: false
+  issue-types-to-search:
+    description: 'A comma separated string of issue types to search through for the desired Jira ticket. Spaces will be trimmed. Either this or project-names-to-search should be set.'
+    required: false
+    default: 'Deployment Task, Deployment Sub-Task'
+  search-field-id:
+    description: 'The field id of the field to search by.'
+    required: true
+    default: '11902'
+  search-value:
+    description: 'The value the field, designated by search-field-id, should be set to on the Jira ticket being searched for.'
+    required: true
+  fields-to-check-for-values:
+    description: 'A comma separated string of fields that will be checked for values. Spaces will be trimmed.'
+    required: true
+    default: 'customfield_16323, customfield_11506' # These correlate to Technical Approval and Stakeholder Approval fields in im-open's Jira
+  check-parent-task:
+    description: "A flag determining whether the parent task will be checked in the event a value isn't found on the task itself."
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
   steps:
-    - name: Step 1
-      id: step_1
-      shell: bash
+    - name: Check for fields on Jira task
+      shell: pwsh
       run: |
-        echo "::set-output name=hello::world"
+        ${{ github.action_path }}/src/check-jira-ticket-fields.ps1 `
+          -jiraDomain "${{ inputs.domain-name }}" `
+          -projectsToFilterTicketsBy "${{ inputs.project-names-to-search }}" `
+          -issuesToFilterTicketsBy "${{ inputs.issue-types-to-search }}" `
+          -filterByFieldId "${{ inputs.search-field-id }}" `
+          -filterByFieldValue "${{ inputs.search-value }}" `
+          -fieldsToCheck "${{ inputs.fields-to-check-for-values }}" `
+          -checkParentTask:$${{ inputs.check-parent-task }}
