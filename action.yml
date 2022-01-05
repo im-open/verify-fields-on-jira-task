@@ -1,6 +1,6 @@
-name: 'Check Jira Deployment Attestations'
+name: 'Verify fields on Jira Task'
 
-description: 'This action will check a deployment task for technical, qa, and stakeholder approvals. If one is not found then the action will fail.'
+description: 'This action will check a Jira task for the specified fields. If a value is not found for one then the action will fail.'
 
 inputs:
   domain-name:
@@ -32,7 +32,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Check for attestations on Jira task
+    - name: Check for fields on Jira task
       shell: pwsh
       run: |
         ${{ github.action_path }}/src/check-jira-ticket-fields.ps1 `
