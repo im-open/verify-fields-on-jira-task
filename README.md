@@ -35,6 +35,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: 'Check a Deployment Task for Technical and Stakeholder approvals'
+        # You may also reference just the major or major.minor version
         uses: im-open/verify-fields-on-jira-task@v1.0.0
         with:
           domain-name: 'jira.company.com'
