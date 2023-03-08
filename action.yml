@@ -1,6 +1,6 @@
-name: 'Verify fields on Jira Task'
+name: Verify fields on Jira Task
 
-description: 'This action will check a Jira task for the specified fields. If a value is not found for one then the action will fail.'
+description: This action will check a Jira task for the specified fields. If a value is not found for one then the action will fail.
 
 inputs:
   domain-name:
