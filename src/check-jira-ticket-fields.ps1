@@ -5,6 +5,7 @@ param (
     [string]$filterByFieldId,
     [string]$filterByFieldValue,
     [string]$fieldsToCheck,
+    [string]$jiraTicket,
     [switch]$checkParentTask = $false
 )
 

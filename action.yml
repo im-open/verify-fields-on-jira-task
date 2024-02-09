@@ -28,6 +28,9 @@ inputs:
     description: "A flag determining whether the parent task will be checked in the event a value isn't found on the task itself."
     required: false
     default: 'false'
+  jira-ticket:
+    description: "The Jira Ticket to look for"
+    required: true
 
 runs:
   using: 'composite'
@@ -42,4 +45,5 @@ runs:
           -filterByFieldId "${{ inputs.search-field-id }}" `
           -filterByFieldValue "${{ inputs.search-value }}" `
           -fieldsToCheck "${{ inputs.fields-to-check-for-values }}" `
+          -jiraTicket "${{ inputs.jira-ticket }}" `
           -checkParentTask:$${{ inputs.check-parent-task }}
