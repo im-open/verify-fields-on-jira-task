@@ -33,8 +33,8 @@ $JiraTaskKey = $null
 #project="Carrier Post Enrollment Development" AND key="CPED-4297" and Stakeholders is not EMPTY
 
 
-$Uri = "https://$jiraDomain/rest/api/2/search?jql=($IssueAndProjectFilter) AND cf[$filterByFieldId]~`"$filterByFieldValue`""
-https://jira.extendhealth.com/rest/api/2/search?jql=(project="Carrier Post Enrollment Development" AND key="CPED-4297" and Stakeholders is not EMPTY)
+#$Uri = "https://$jiraDomain/rest/api/2/search?jql=($IssueAndProjectFilter) AND cf[$filterByFieldId]~`"$filterByFieldValue`""
+$Uri = "https://jira.extendhealth.com/rest/api/2/search?jql=(project='Carrier Post Enrollment Development' AND key='CPED-4297' and Stakeholders is not EMPTY)"
 $AllPossibleFields = Invoke-RestMethod -Method Get -Uri "https://$jiraDomain/rest/api/2/field"
 
 Write-Output "Generated url to query jira with: $Uri"
