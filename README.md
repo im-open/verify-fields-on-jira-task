@@ -24,7 +24,7 @@ This action has been customized for `im-open's` needs. Outside users will need t
 | `project-names-to-search`    | true        | N/A                                  | A comma separated string of project names to search through for the desired Jira ticket. Spaces will be trimmed. Either this or issue-types-to-search should be set. |
 | `fields-to-check-for-values` | false       | customfield_16323, customfield_11506 | A comma separated string of fields that will be checked for values. Spaces will be trimmed. |
 | `check-parent-task`          | false       | false                                | A flag determining whether the parent task will be checked in the event a value isn't found on the task itself. |
-| `jira-ticket`                | true        | N/A                                  | The Jira Ticket in which to verify that it has values for the designated fields. |
+| `jira-ticket`                | true        | N/A                                  | The Jira Ticket that should have the designated fields. |
 
 ## Usage Examples
 

@@ -29,7 +29,7 @@ inputs:
     required: false
     default: 'false'
   jira-ticket:
-    description: "The Jira Ticket to look for"
+    description: "The Jira Ticket that should have the designated fields"
     required: true
 
 runs:
