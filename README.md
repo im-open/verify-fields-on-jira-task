@@ -37,7 +37,7 @@ jobs:
     steps:
       - name: 'Check a Deployment Task for Technical and Stakeholder approvals'
         # You may also reference just the major or major.minor version
-        uses: im-open/verify-fields-on-jira-task@v2.0.1
+        uses: im-open/verify-fields-on-jira-task@v1.0.3
         with:
           domain-name: 'jira.company.com'
           search-value: 'my-repo/releases/tag/v1.0.0'
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: 'Check Jira ticket for two mandatory fields'
-        uses: im-open/verify-fields-on-jira-task@v1.0.2
+        uses: im-open/verify-fields-on-jira-task@v1.0.3
         with:
           domain-name: 'jira.company.com'
           project-names-to-search: 'First Project, Second Project'
