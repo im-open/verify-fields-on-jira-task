@@ -1,9 +1,6 @@
 param (
     [string]$jiraDomain,
     [string]$projectsToFilterTicketsBy,
-    [string]$issuesToFilterTicketsBy,
-    [string]$filterByFieldId,
-    [string]$filterByFieldValue,
     [string]$fieldsToCheck,
     [string]$jiraTicket,
     [switch]$checkParentTask = $false
