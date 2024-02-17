@@ -21,7 +21,7 @@ $JiraTickets = Invoke-RestMethod -Method Get -Uri $Uri
 $JiraTask = $JiraTickets.issues[0]
 
 if ($null -eq $JiraTask) {
-    throw "No Jira task found"
+    throw "No Jira task found. Check if the Jira task has the status of Deployed or Technical Reviewed"
 }
 
 # If multiple issues are found, select the first one
