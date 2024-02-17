@@ -11,7 +11,7 @@ $Fields = $fieldsToCheck -split "," | ForEach-Object { $_.Trim() }
 $JiraTask = $null
 $JiraTaskKey = $null
 
-$Uri = "https://$jiraDomain/rest/api/2/search?jql=(project='$projectsToFilterTicketsBy' AND key='$jiraTicket')"
+$Uri = "https://$jiraDomain/rest/api/2/search?jql=(project='$projectsToFilterTicketsBy' AND key='$jiraTicket' AND status in ('Deployed', 'Technical Reviewed'))"
 $AllPossibleFields = Invoke-RestMethod -Method Get -Uri "https://$jiraDomain/rest/api/2/field"
 
 Write-Output "Generated url to query jira with: $Uri"
