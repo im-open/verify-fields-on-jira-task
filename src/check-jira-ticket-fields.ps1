@@ -56,7 +56,7 @@ foreach ($field in $Fields) {
         throw "Jira Task $JiraTaskKey does not have a value for $FieldName"
     }
 
-    Write-Output "$FieldName has been set to $($FieldValue.displayName) on ticket $JiraTaskKey"
+    Write-Output "$FieldName was provided by $($FieldValue.displayName) on ticket $JiraTaskKey"
 }
 
 Write-Output "`nJira Task $JiraTaskKey has all of the specified fields set`n"
