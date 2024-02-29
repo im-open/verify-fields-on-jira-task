@@ -23,11 +23,14 @@ inputs:
   fields-to-check-for-values:
     description: 'A comma separated string of fields that will be checked for values. Spaces will be trimmed.'
     required: true
-    default: 'customfield_16323, customfield_11506' # These correlate to Technical Approval and Stakeholder Approval fields in im-open's Jira
+    default: 'customfield_16323, customfield_11506, customfield_11507' # These correlate to Technical Approval, Stakeholder Approval and QA approval fields in im-open's Jira.
   check-parent-task:
     description: "A flag determining whether the parent task will be checked in the event a value isn't found on the task itself."
     required: false
     default: 'false'
+  jira-ticket:
+    description: "The Jira Ticket that should have the designated fields"
+    required: true
 
 runs:
   using: 'composite'
@@ -38,8 +41,6 @@ runs:
         ${{ github.action_path }}/src/check-jira-ticket-fields.ps1 `
           -jiraDomain "${{ inputs.domain-name }}" `
           -projectsToFilterTicketsBy "${{ inputs.project-names-to-search }}" `
-          -issuesToFilterTicketsBy "${{ inputs.issue-types-to-search }}" `
-          -filterByFieldId "${{ inputs.search-field-id }}" `
-          -filterByFieldValue "${{ inputs.search-value }}" `
           -fieldsToCheck "${{ inputs.fields-to-check-for-values }}" `
+          -jiraTicket "${{ inputs.jira-ticket }}" `
           -checkParentTask:$${{ inputs.check-parent-task }}

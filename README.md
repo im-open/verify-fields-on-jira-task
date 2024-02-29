@@ -20,13 +20,11 @@ This action has been customized for `im-open's` needs. Outside users will need t
 
 | Parameter                    | Is Required | Default                              | Description                                                                                                                                                          |
 |------------------------------|-------------|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `domain-name`                | true        | N/A                                  | The domain name for Jira.                                                                                                                                            |
-| `project-names-to-search`    | false       | N/A                                  | A comma separated string of project names to search through for the desired Jira ticket. Spaces will be trimmed. Either this or issue-types-to-search should be set. |
-| `issue-types-to-search`      | false       | Deployment Task, Deployment Sub-Task | A comma separated string of issue types to search through for the desired Jira ticket. Spaces will be trimmed. Either this or project-names-to-search should be set. |
-| `search-field-id`            | true        | 11902                                | The field id of the field to search by.                                                                                                                              |
-| `search-value`               | true        | N/A                                  | The value the field, designated by search-field-id, should be set to on the Jira ticket being searched for.                                                          |
-| `fields-to-check-for-values` | true        | customfield_16323, customfield_11506 | A comma separated string of fields that will be checked for values. Spaces will be trimmed.                                                                          |
-| `check-parent-task`          | false       | false                                | A flag determining whether the parent task will be checked in the event a value isn't found on the task itself.                                                      |
+| `domain-name`                | true        | N/A                                  | The domain name for Jira. |
+| `project-names-to-search`    | true        | N/A                                  | A comma separated string of project names to search through for the desired Jira ticket. Spaces will be trimmed. Either this or issue-types-to-search should be set. |
+| `fields-to-check-for-values` | false       | customfield_16323, customfield_11506 | A comma separated string of fields that will be checked for values. Spaces will be trimmed. |
+| `check-parent-task`          | false       | false                                | A flag determining whether the parent task will be checked in the event a value isn't found on the task itself. |
+| `jira-ticket`                | true        | N/A                                  | The Jira Ticket that should have the designated fields. |
 
 ## Usage Examples
 
@@ -39,10 +37,11 @@ jobs:
     steps:
       - name: 'Check a Deployment Task for Technical and Stakeholder approvals'
         # You may also reference just the major or major.minor version
-        uses: im-open/verify-fields-on-jira-task@v1.0.2
+        uses: im-open/verify-fields-on-jira-task@v1.0.3
         with:
           domain-name: 'jira.company.com'
-          search-value: 'my-repo/releases/tag/v1.0.0'
+          project-names-to-search: 'My Jira Project'
+          jira-ticket: 'ABCD-1234'
 ```
 
 **Full example overriding defaults**
@@ -53,15 +52,13 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: 'Check Jira ticket for two mandatory fields'
-        uses: im-open/verify-fields-on-jira-task@v1.0.2
+        uses: im-open/verify-fields-on-jira-task@v1.0.3
         with:
           domain-name: 'jira.company.com'
-          project-names-to-search: 'First Project, Second Project'
-          issue-types-to-search: 'Task, Subtask'
-          search-field-id: '12345'
-          search-value: 'my-repo/releases/tag/v1.0.0'
-          fields-to-check-for-values: 'customfield_2345, customfield_3456'
+          project-names-to-search: 'My Jira Project'
+          jira-ticket: 'ABCD-1234'
           check-parent-task: 'true'
+          fields-to-check-for-values: 'customfield_16323'
 ```
 
 ## Contributing

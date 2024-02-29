@@ -1,31 +1,17 @@
 param (
     [string]$jiraDomain,
     [string]$projectsToFilterTicketsBy,
-    [string]$issuesToFilterTicketsBy,
-    [string]$filterByFieldId,
-    [string]$filterByFieldValue,
     [string]$fieldsToCheck,
+    [string]$jiraTicket,
     [switch]$checkParentTask = $false
 )
 
-$ProjectsFilter = ""
-$IssuesFilter = ""
-
-if ($projectsToFilterTicketsBy) {
-    $ProjectsFilter = @($projectsToFilterTicketsBy -split "," | ForEach-Object { " OR project=`"$($_.Trim())`"" }) -join ""
-}
-
-if ($issuesToFilterTicketsBy) {
-    $IssuesFilter = @($issuesToFilterTicketsBy -split "," | ForEach-Object { "issuetype=`"$($_.Trim())`"" }) -join " OR "
-}
-
 $Fields = $fieldsToCheck -split "," | ForEach-Object { $_.Trim() }
-$IssueAndProjectFilter = $IssuesFilter + $ProjectsFilter
 
 $JiraTask = $null
 $JiraTaskKey = $null
 
-$Uri = "https://$jiraDomain/rest/api/2/search?jql=($IssueAndProjectFilter) AND cf[$filterByFieldId]~`"$filterByFieldValue`""
+$Uri = "https://$jiraDomain/rest/api/2/search?jql=(project='$projectsToFilterTicketsBy' AND key='$jiraTicket' AND status in ('Deployed', 'Technical Reviewed'))"
 $AllPossibleFields = Invoke-RestMethod -Method Get -Uri "https://$jiraDomain/rest/api/2/field"
 
 Write-Output "Generated url to query jira with: $Uri"
@@ -35,7 +21,7 @@ $JiraTickets = Invoke-RestMethod -Method Get -Uri $Uri
 $JiraTask = $JiraTickets.issues[0]
 
 if ($null -eq $JiraTask) {
-    throw "No Jira task found"
+    throw "No Jira task found. Check if the Jira task has the status of Deployed or Technical Reviewed"
 }
 
 # If multiple issues are found, select the first one
@@ -70,7 +56,7 @@ foreach ($field in $Fields) {
         throw "Jira Task $JiraTaskKey does not have a value for $FieldName"
     }
 
-    Write-Output "$FieldName has been set to $($FieldValue.displayName) on ticket $JiraTaskKey"
+    Write-Output "$FieldName was provided by $($FieldValue.displayName) on ticket $JiraTaskKey"
 }
 
 Write-Output "`nJira Task $JiraTaskKey has all of the specified fields set`n"
